@@ -16,19 +16,17 @@ namespace CoreLib.Client
 
         private static ModulePhase _currentPhase = ModulePhase.None;
 
-        private static void Release()
-        {
-            Modules.Clear();
-            UseModuleTypes.Clear();
-            ReservedModules.Clear();
-            _currentPhase = ModulePhase.None;
-            
-            Application.quitting -= Release;
-        }
+        private static bool _isInitialized;
         
         // 1. 최초에 사용할 Module의 목록 지정
         public static void Initialize(List<Type> useModuleTypes)
         {
+            if (_isInitialized)
+            {
+                Debug.LogError("ModuleManager is already initialized");
+                return;
+            }
+            
             for (var i = 0; i < useModuleTypes.Count; i++)
             {
                 if (!useModuleTypes[i].IsAssignableFrom(typeof(ModuleBase)))
@@ -38,9 +36,11 @@ namespace CoreLib.Client
             UseModuleTypes.Clear();
             UseModuleTypes.AddRange(useModuleTypes);
 
+            _isInitialized = true;
+
             Application.quitting += Release;
         }
-
+        
         // 2. Phase를 변경하며 Phase에 맞게 Module들을 Release 및 Initialize
         public static void InitializePhase(ModulePhase nextPhase)
         {
@@ -54,6 +54,18 @@ namespace CoreLib.Client
                 ReleaseModule(type, nextPhase);
                 InitializeModule(type, nextPhase);
             }
+        }
+        
+        private static void Release()
+        {
+            Modules.Clear();
+            UseModuleTypes.Clear();
+            ReservedModules.Clear();
+            _currentPhase = ModulePhase.None;
+
+            _isInitialized = false;
+            
+            Application.quitting -= Release;
         }
 
         private static void ReleaseModule(Type moduleType, ModulePhase phase)
