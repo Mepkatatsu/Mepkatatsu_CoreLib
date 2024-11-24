@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CoreLib.Client
+namespace CoreLib.Client.Module
 {
     // ModuleBase의 수명 주기를 관리
     public static class ModuleManager

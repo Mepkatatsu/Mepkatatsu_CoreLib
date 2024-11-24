@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CoreLib.Client
+namespace CoreLib.Client.Module
 {
     // Singleton으로 사용할 MonoBehaviour
     public abstract class ModuleBase : MonoBehaviour
